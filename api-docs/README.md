@@ -1,3 +1,8 @@
+How to build
+=============
+bundle exec middleman build --clean
+
+
 Slate
 ========
 
