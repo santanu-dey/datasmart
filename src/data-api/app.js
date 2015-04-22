@@ -62,23 +62,21 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    
-    if (req.path.indexOf("v1") >= 0){
-        res.set('Content-Type', "appliation/json")
-        res.send(JSON.stringify(err))
-    }
-    else{
+app.use(function(err, req, res, next) {
+  if (req.path.indexOf("v1") >= 0){
+      res.set('Content-Type', "appliation/json")
+      res.status(err.status||500).send({status:err.status, message: err.message}); 
+  }
+  else{
 
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-
-    }
-
+  res.render('error', {
+    message: err.message,
+    error: err
   });
+
+  }
+
+});
 
 
 

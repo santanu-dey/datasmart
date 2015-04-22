@@ -27,16 +27,38 @@ router.get('/:collection', function(req, res, next) {
 
 // Get a specific item from a collection
 router.get('/:collection/:id', function(req, res, next) {
-  res.send('Respond with API: '+ req.params.collection+' GET call '+req.params.id);
-});
+  //res.send('Respond with API: '+ req.params.collection+' GET call '+req.params.id);
 
-// POST a specific item from a collection
-router.post('/:collection/', function(req, res, next) {
-
-  collection.createUser(req.body, function function_name (doc, err) {
+  collection.getUser(req.params.id, function getDocs (user, err) {
+  	
   	if (err){
   		console.log(err);
   		next(err);
+  	} else {
+  		res.send(JSON.stringify(user));
+  	}
+
+  });
+
+});
+
+
+
+
+// POST a specific item to a collection
+router.post('/:collection/', function(req, res, next) {
+
+  collection.createUser(req.body, function callback (doc, err) {
+  	if (err){
+  		var error = new Error("Bad Request");
+  		if (err.code == 11000){
+  			error.status = 409;
+  		}
+  		else{
+  			error.status = 400;
+  		}
+  		error.message = err.message;
+  		next(error);
   	} else {
   		res.send(JSON.stringify(doc));
   	}
@@ -52,7 +74,13 @@ router.put('/:collection/:id', function(req, res, next) {
 
 // Delete a specific item from a collection
 router.delete('/:collection/:id', function(req, res, next) {
-  res.send('Respond with API: '+ req.params.collection+' DELETE call '+req.params.id);
+  
+  collection.deleteUser(req.params.id, function callback (err) {
+  	console.log('Inside callback');
+  	res.status(202).send();
+  	
+  });
+
 });
 
 module.exports = router;
